@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class PaymentRequest {
     private Long reservationId;
     private Double amount;
-    private String clientEmail; // For MPs and for contacting the client
+    private String clientEmail; // For MercadoPago and for contacting the client
 }
