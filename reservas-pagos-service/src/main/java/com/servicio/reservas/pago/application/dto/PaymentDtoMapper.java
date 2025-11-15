@@ -14,7 +14,6 @@ public class PaymentDtoMapper {
         return newPayment;
     }
 
-    // Existente: Convierte Dominio a Response (para devolver el estado del pago)
     public PaymentResponse toResponse(Payment payment){
         PaymentResponse response = new PaymentResponse();
         response.setId(payment.getId());
