@@ -15,7 +15,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payments", indexes = {@Index(name = "idx_reservation_id", columnList = "reservation_id")})
+@Table(
+    name = "payments",
+    indexes = {
+        @Index(name = "idx_reservation_id", columnList = "reservation_id"),
+        @Index(name = "idx_external_payment_id", columnList = "external_payment_id")
+    }
+)
 @Data
 @NoArgsConstructor
 public class PaymentModel {
