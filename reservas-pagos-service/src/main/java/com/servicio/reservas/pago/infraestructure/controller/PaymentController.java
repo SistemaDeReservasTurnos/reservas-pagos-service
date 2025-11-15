@@ -2,6 +2,7 @@ package com.servicio.reservas.pago.infraestructure.controller;
 
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.PaymentService;
+import com.servicio.reservas.pago.infraestructure.exception.PaymentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,6 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> getPaymentStatus(@PathVariable Long id){
         return paymentService.getPaymentById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new PaymentNotFoundException(id.toString()));
     }
 }

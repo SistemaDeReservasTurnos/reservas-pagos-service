@@ -9,12 +9,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.Index;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments", indexes = {@Index(name = "idx_reservation_id", columnList = "reservation_id")})
 @Data
 @NoArgsConstructor
 public class PaymentModel {
