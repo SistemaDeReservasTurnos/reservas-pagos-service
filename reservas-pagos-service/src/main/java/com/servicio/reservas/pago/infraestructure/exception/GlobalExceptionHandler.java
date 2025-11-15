@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
                 Map.of("error", "Bad Request", "message", ex.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
-        @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
         log.error("Unhandled internal server error occurred.", ex);
         return new ResponseEntity<>(
