@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j; //objet log import
+import lombok.extern.slf4j.Slf4j; //object log import
 
 @ControllerAdvice
 @Slf4j
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
                 Map.of("error", "Bad Request", "message", ex.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
-        @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
         log.error("Unhandled internal server error occurred.", ex);
         return new ResponseEntity<>(
