@@ -3,7 +3,6 @@ package com.servicio.reservas.pago.infraestructure.controller;
 import com.servicio.reservas.pago.application.dto.PaymentDtoMapper;
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.PaymentService;
-import com.servicio.reservas.pago.domain.entities.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
