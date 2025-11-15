@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j; //objet log import
+import lombok.extern.slf4j.Slf4j; //object log import
 
 @ControllerAdvice
 @Slf4j
