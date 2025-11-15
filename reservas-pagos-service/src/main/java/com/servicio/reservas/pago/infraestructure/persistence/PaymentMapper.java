@@ -1,10 +1,6 @@
 package com.servicio.reservas.pago.infraestructure.persistence;
 
 import com.servicio.reservas.pago.domain.entities.Payment;
-import com.servicio.reservas.pago.domain.entities.PaymentStatus;
-import org.springframework.stereotype.Component;
-
-@Component
 public class PaymentMapper {
 
     public static PaymentModel toModel(Payment domain) {
