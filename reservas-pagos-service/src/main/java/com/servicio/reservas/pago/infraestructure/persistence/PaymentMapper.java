@@ -1,7 +1,6 @@
 package com.servicio.reservas.pago.infraestructure.persistence;
 
 import com.servicio.reservas.pago.domain.entities.Payment;
-import com.servicio.reservas.pago.domain.entities.PaymentStatus;
 public class PaymentMapper {
 
     public static PaymentModel toModel(Payment domain) {
