@@ -6,8 +6,6 @@ import java.util.List;
 @Builder
 @Data
 @NoArgsConstructor
-
-
 public class PreferenceRequest {
 
     private List<Item> items;
@@ -15,7 +13,6 @@ public class PreferenceRequest {
     private String externalReference;
 
     @Data
-    @Builder
     @AllArgsConstructor
     public static class Item {
         private String title;
@@ -25,6 +22,7 @@ public class PreferenceRequest {
 
     @Data
     @Builder
+    @AllArgsConstructor
     public static class BackUrls {
         private String success;
         private String pending;

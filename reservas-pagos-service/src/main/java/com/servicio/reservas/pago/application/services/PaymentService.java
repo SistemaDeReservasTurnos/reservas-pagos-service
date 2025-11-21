@@ -67,7 +67,7 @@ public class PaymentService implements IPaymentService {
                 PreferenceRequest.BackUrls.builder()
                         .success(this.successUrl)
                         .pending(this.pendingUrl)
-                        .failure(this.pendingUrl)
+                        .failure(this.failureUrl)
                         .build(),
                 savedPayment.getId().toString()
         );

@@ -5,12 +5,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentDtoMapper {
 
-    public Payment toDomain(PaymentRequest request){
-        Payment newPayment = new Payment();
-        newPayment.setReservationId(request.getReservationId());
-        return newPayment;
-    }
-
     public PaymentResponse toResponse(Payment payment){
         PaymentResponse response = new PaymentResponse();
         response.setId(payment.getId());
