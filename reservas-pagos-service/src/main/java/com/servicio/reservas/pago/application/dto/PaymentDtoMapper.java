@@ -2,9 +2,6 @@ package com.servicio.reservas.pago.application.dto;
 
 import com.servicio.reservas.pago.domain.entities.Payment;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-
 @Component
 public class PaymentDtoMapper {
 

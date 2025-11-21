@@ -47,7 +47,6 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
             return Optional.of(response);
 
         } catch (MPApiException e) {
-            // 💥 MODIFICACIÓN CLAVE: Imprime el contenido REAL del cuerpo (content) 💥
             String responseContent = e.getApiResponse() != null ? e.getApiResponse().getContent() : "No response body found.";
 
             log.error("Error de API de Mercado Pago: HTTP Status: {}, Response Body Content: {}",
@@ -56,7 +55,6 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
             return Optional.empty();
 
         } catch (Exception e) {
-            // Bloque genérico para otras excepciones (como MPException, si no es ApiException)
             log.error("Error inesperado creando preferencia en Mercado Pago: {}", e.getMessage(), e);
             return Optional.empty();
         }
