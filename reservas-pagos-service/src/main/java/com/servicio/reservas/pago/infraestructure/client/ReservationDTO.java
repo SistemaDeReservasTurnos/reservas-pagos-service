@@ -12,5 +12,4 @@ public class ReservationDTO {
     private Long serviceId;
     private Long userId;
     private Double amount;
-    //Other necessary fields such as amount if calculated in Reserves
 }
