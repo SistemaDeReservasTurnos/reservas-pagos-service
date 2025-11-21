@@ -26,7 +26,7 @@ public class PreferenceMapper {
                             .title(item.getTitle())
                             .unitPrice(priceAsInteger)
                             .quantity(item.getQuantity())
-                            .currencyId("COP")
+                            .currencyId(item.getCurrencyId() != null ? item.getCurrencyId() : "COP")
                             .build();
                 })
                 .collect(Collectors.toList());
