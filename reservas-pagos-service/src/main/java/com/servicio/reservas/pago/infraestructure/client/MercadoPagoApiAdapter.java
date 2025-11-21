@@ -47,7 +47,7 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
         } catch (MPApiException e) {
             String responseContent = e.getApiResponse() != null ? e.getApiResponse().getContent() : "No response body found.";
 
-            log.error("Error de API de Mercado Pago: HTTP Status: {}, Response Body Content: {}",
+            log.error("Mercado Pago API error: HTTP Status: {}, Response Body Content: {}",
                     e.getStatusCode(), responseContent);
 
             return Optional.empty();
