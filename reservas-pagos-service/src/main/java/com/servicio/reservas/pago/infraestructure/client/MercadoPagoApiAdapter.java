@@ -55,7 +55,7 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
             return Optional.empty();
 
         } catch (Exception e) {
-            log.error("Error inesperado creando preferencia en Mercado Pago: {}", e.getMessage(), e);
+            log.error("Unexpected error creating payment preference in Mercado Pago: {}", e.getMessage(), e);
             return Optional.empty();
         }
     }
