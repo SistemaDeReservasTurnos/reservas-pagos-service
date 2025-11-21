@@ -22,10 +22,8 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
     public MercadoPagoApiAdapter(@Value("${mercado-pago.access-token}") String accessToken,
                                  @Value("${app.notification_url}") String notificationUrl) {
 
-        // Global SDK configuration
-        MercadoPagoConfig.setAccessToken(accessToken);
-
-        this.preferenceClient = new PreferenceClient();
+        // Use instance-level configuration for PreferenceClient
+        this.preferenceClient = new PreferenceClient(accessToken);
         this.notificationUrl = notificationUrl;
     }
 
@@ -49,13 +47,13 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
         } catch (MPApiException e) {
             String responseContent = e.getApiResponse() != null ? e.getApiResponse().getContent() : "No response body found.";
 
-            log.error("Error de API de Mercado Pago: HTTP Status: {}, Response Body Content: {}",
+            log.error("Mercado Pago API error: HTTP Status: {}, Response Body Content: {}",
                     e.getStatusCode(), responseContent);
 
             return Optional.empty();
 
         } catch (Exception e) {
-            log.error("Error inesperado creando preferencia en Mercado Pago: {}", e.getMessage(), e);
+            log.error("Unexpected error creating payment preference in Mercado Pago: {}", e.getMessage(), e);
             return Optional.empty();
         }
     }
