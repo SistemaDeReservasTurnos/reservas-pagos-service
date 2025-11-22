@@ -1,22 +1,51 @@
 package com.servicio.reservas.pago.infraestructure.controller;
 
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
-import com.servicio.reservas.pago.application.services.PaymentService;
-import com.servicio.reservas.pago.infraestructure.exception.PaymentNotFoundException;
+import com.servicio.reservas.pago.application.services.IPaymentService;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/payments")
+@RequiredArgsConstructor
 public class PaymentController {
-    private final PaymentService paymentService;
+
+    private final IPaymentService paymentService;
+
+    @PostMapping("/create")
+    public ResponseEntity<PaymentResponse> createPayment(
+            @RequestParam @NotNull(message = "Reservation ID cannot be null")
+            @Positive(message = "Reservation ID must be a positive number")
+            Long reservationId) {
+
+        PaymentResponse response = paymentService.createPayment(reservationId);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentResponse> getPaymentStatus(@PathVariable Long id){
+    public ResponseEntity<PaymentResponse> getPaymentStatus(@PathVariable Long id) {
         return paymentService.getPaymentById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new PaymentNotFoundException(id.toString()));
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> receiveWebhookNotification(
+            @RequestParam(name = "id") Long paymentId,
+            @RequestParam(name = "status") String newStatus,
+            @RequestParam(name = "topic", required = false) String topic
+    ) {
+        final String updatedBySource = "MERCADOPAGO_WEBHOOK";
+        try {
+            paymentService.updatePaymentStatus(paymentId, newStatus, updatedBySource);
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

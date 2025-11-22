@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 public class PaymentResponse {
     private Long id;
     private Long reservationId;
+    private String externalPaymentId;
     private Double amount;
     private PaymentStatus status;
     private String paymentLink;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

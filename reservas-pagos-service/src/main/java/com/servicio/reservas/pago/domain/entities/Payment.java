@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,9 +22,9 @@ public class Payment {
     private String createdBy;
     private String updatedBy;
 
-    public boolean isApproved() {
-        return status == PaymentStatus.APPROVED;
-    }
+//    public boolean isApproved() {
+//        return status == PaymentStatus.APPROVED;
+//    }
 
     public void updateStatus(PaymentStatus newStatus, String updatedByUser) {
         this.status = newStatus;
