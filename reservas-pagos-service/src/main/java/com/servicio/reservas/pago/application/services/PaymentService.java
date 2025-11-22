@@ -11,7 +11,6 @@ import com.servicio.reservas.pago.infraestructure.client.IGatewayPaymentPort;
 import com.servicio.reservas.pago.infraestructure.client.IReservationClient;
 import com.servicio.reservas.pago.infraestructure.client.ReservationDTO;
 import com.servicio.reservas.pago.infraestructure.exception.*;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
