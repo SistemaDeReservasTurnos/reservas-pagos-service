@@ -11,5 +11,5 @@ public interface IPaymentService {
 //    Payment createInitialPayment(Payment payment);
     Optional<PaymentResponse> getPaymentById(Long paymentId);
     Payment updatePaymentStatus(Long paymentId, String newStatus, String updatedBy);
-
+    byte[] generatePaymentVoucher(Long paymentId);
 }

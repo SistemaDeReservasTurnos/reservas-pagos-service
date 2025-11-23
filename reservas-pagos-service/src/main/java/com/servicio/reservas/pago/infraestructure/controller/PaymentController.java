@@ -5,7 +5,9 @@ import com.servicio.reservas.pago.application.services.IPaymentService;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,22 @@ public class PaymentController {
         return paymentService.getPaymentById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/voucher")
+    public ResponseEntity<byte[]> generateVoucher(@PathVariable("id") Long paymentId) {
+
+        byte[] pdfContents = paymentService.generatePaymentVoucher(paymentId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+
+        String filename = "payment_voucher_" + paymentId + ".pdf";
+        headers.setContentDispositionFormData(filename, filename);
+        headers.setContentLength(pdfContents.length);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContents);
     }
 
     @PostMapping("/webhook")

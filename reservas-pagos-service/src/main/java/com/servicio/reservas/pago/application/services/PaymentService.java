@@ -7,10 +7,12 @@ import com.servicio.reservas.pago.application.dto.PreferenceResponse;
 import com.servicio.reservas.pago.domain.entities.Payment;
 import com.servicio.reservas.pago.domain.entities.PaymentStatus;
 import com.servicio.reservas.pago.domain.repository.IPaymentRepository;
+import com.servicio.reservas.pago.domain.services.VoucherPdfGeneratorService;
 import com.servicio.reservas.pago.infraestructure.client.IGatewayPaymentPort;
 import com.servicio.reservas.pago.infraestructure.client.IReservationClient;
 import com.servicio.reservas.pago.infraestructure.client.ReservationDTO;
 import com.servicio.reservas.pago.infraestructure.exception.*;
+import feign.Param;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,7 @@ public class PaymentService implements IPaymentService {
     private final IReservationClient reservationClient;
     private final IGatewayPaymentPort gatewayPaymentPort;
     private static final String AUDIT_USER_ID = "RESERVAS_SERVICE";
+    private final VoucherPdfGeneratorService voucherPdfGeneratorService;
 
     @Value("${app.payment.success-url}")
     private String successUrl;
@@ -107,5 +110,20 @@ public class PaymentService implements IPaymentService {
         payment.updateStatus(paymentStatus, updatedBy);
 
         return paymentRepository.save(payment);
+    }
+
+    public byte[] generatePaymentVoucher(Long paymentId) {
+        Optional<Payment> paymnetOpt = paymentRepository.findById(paymentId);
+
+        if (paymnetOpt.isEmpty()) {
+            throw new PaymentNotFoundException("Payment not found with ID: " + paymentId);
+        }
+
+        Payment payment = paymnetOpt.get();
+
+        if (!payment.getStatus().equals(PaymentStatus.APPROVED)) {
+            throw new IllegalStateException("Cannot generate voucher for payment status: " + payment.getStatus());
+        }
+        return voucherPdfGeneratorService.generatePdf(payment);
     }
 }
