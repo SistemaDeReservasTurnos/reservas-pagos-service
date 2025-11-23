@@ -75,16 +75,22 @@ public class PaymentService implements IPaymentService {
                 savedPayment.getId().toString()
         );
 
-        PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
-                .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
+        try {
+            PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
+                    .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
 
-        savedPayment.setExternalPaymentId(mpResponse.getId());
-        savedPayment.setPaymentLink(mpResponse.getInit_point());
+            savedPayment.setExternalPaymentId(mpResponse.getId());
+            savedPayment.setPaymentLink(mpResponse.getInit_point());
 
-        Payment finalPayment = paymentRepository.save(savedPayment);
+            Payment finalPayment = paymentRepository.save(savedPayment);
 
-        return paymentDtoMapper.toResponse(finalPayment);
-    }
+            return paymentDtoMapper.toResponse(finalPayment);
+        } catch (Exception ex) {
+            savedPayment.setStatus(PaymentStatus.FAILED);
+            savedPayment.setUpdatedAt(LocalDateTime.now());
+            paymentRepository.save(savedPayment);
+            throw ex;
+        }
 
     @Override
     @Transactional(readOnly = true)
