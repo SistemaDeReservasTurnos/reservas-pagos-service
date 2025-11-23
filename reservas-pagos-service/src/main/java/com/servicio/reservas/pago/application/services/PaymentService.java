@@ -93,6 +93,7 @@ public class PaymentService implements IPaymentService {
                 .map(paymentDtoMapper::toResponse);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<PaymentResponse> findAllPayments(){
         List<Payment> payments = paymentRepository.findAll();
