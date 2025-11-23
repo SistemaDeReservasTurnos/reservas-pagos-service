@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(VoucherGenerationException.class)
     public ResponseEntity<Map<String, String>> handleVoucherGenerationException(VoucherGenerationException ex) {
         return new ResponseEntity<>(
-                Map.of("error", "Bad Request / Processing Error", "message", ex.getMessage()),
-                HttpStatus.BAD_REQUEST);
+                Map.of("error", "Unprocessable Entity", "message", ex.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
