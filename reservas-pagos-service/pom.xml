@@ -114,6 +114,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <finalName>reservas-pagos-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -137,7 +138,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <finalName>reservas-pagos-service</finalName>
                 </configuration>
             </plugin>
         </plugins>
