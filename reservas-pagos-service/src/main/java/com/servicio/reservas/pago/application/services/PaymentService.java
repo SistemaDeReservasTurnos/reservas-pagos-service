@@ -12,14 +12,15 @@ import com.servicio.reservas.pago.infraestructure.client.IGatewayPaymentPort;
 import com.servicio.reservas.pago.infraestructure.client.IReservationClient;
 import com.servicio.reservas.pago.infraestructure.client.ReservationDTO;
 import com.servicio.reservas.pago.infraestructure.exception.*;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,22 +75,16 @@ public class PaymentService implements IPaymentService {
                 savedPayment.getId().toString()
         );
 
-        try {
-            PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
-                    .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
+        PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
+                .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
 
-            savedPayment.setExternalPaymentId(mpResponse.getId());
-            savedPayment.setPaymentLink(mpResponse.getInit_point());
+        savedPayment.setExternalPaymentId(mpResponse.getId());
+        savedPayment.setPaymentLink(mpResponse.getInit_point());
 
-            Payment finalPayment = paymentRepository.save(savedPayment);
+        Payment finalPayment = paymentRepository.save(savedPayment);
 
-            return paymentDtoMapper.toResponse(finalPayment);
-        } catch (Exception ex) {
-            savedPayment.setStatus(PaymentStatus.FAILED);
-            savedPayment.setUpdatedAt(LocalDateTime.now());
-            paymentRepository.save(savedPayment);
-            throw ex;
-        }
+        return paymentDtoMapper.toResponse(finalPayment);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -98,6 +93,14 @@ public class PaymentService implements IPaymentService {
                 .map(paymentDtoMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
+    public List<PaymentResponse> findAllPayments(){
+        List<Payment> payments = paymentRepository.findAll();
+
+        return payments.stream()
+                .map(paymentDtoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional
@@ -118,13 +121,13 @@ public class PaymentService implements IPaymentService {
     }
 
     public byte[] generatePaymentVoucher(Long paymentId) {
-        Optional<Payment> paymnetOpt = paymentRepository.findById(paymentId);
+        Optional<Payment> paymentOpt = paymentRepository.findById(paymentId);
 
-        if (paymnetOpt.isEmpty()) {
+        if (paymentOpt.isEmpty()) {
             throw new PaymentNotFoundException("Payment not found with ID: " + paymentId);
         }
 
-        Payment payment = paymnetOpt.get();
+        Payment payment = paymentOpt.get();
 
         if (!payment.getStatus().equals(PaymentStatus.APPROVED)) {
             throw new VoucherGenerationException("Cannot generate voucher for payment status: " + payment.getStatus());
