@@ -1,0 +1,23 @@
+# Directorios y archivos de compilación de Maven
+target/
+build/
+*.jar
+*.war
+*.zip
+!pom.xml
+
+# Archivos de caché e IDE
+.idea/
+.vscode/
+.settings/
+*.log
+*.class
+temp
+tmp/
+
+# Control de Versiones
+.git
+.gitignore
+
+# Logs de la aplicación
+logs/
