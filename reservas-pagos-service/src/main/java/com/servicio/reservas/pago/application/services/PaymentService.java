@@ -7,6 +7,7 @@ import com.servicio.reservas.pago.application.dto.PreferenceResponse;
 import com.servicio.reservas.pago.domain.entities.Payment;
 import com.servicio.reservas.pago.domain.entities.PaymentStatus;
 import com.servicio.reservas.pago.domain.repository.IPaymentRepository;
+import com.servicio.reservas.pago.domain.services.VoucherPdfGeneratorService;
 import com.servicio.reservas.pago.infraestructure.client.IGatewayPaymentPort;
 import com.servicio.reservas.pago.infraestructure.client.IReservationClient;
 import com.servicio.reservas.pago.infraestructure.client.ReservationDTO;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class PaymentService implements IPaymentService {
     private final IReservationClient reservationClient;
     private final IGatewayPaymentPort gatewayPaymentPort;
     private static final String AUDIT_USER_ID = "RESERVAS_SERVICE";
+    private final VoucherPdfGeneratorService voucherPdfGeneratorService;
 
     @Value("${app.payment.success-url}")
     private String successUrl;
@@ -71,22 +75,16 @@ public class PaymentService implements IPaymentService {
                 savedPayment.getId().toString()
         );
 
-        try {
-            PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
-                    .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
+        PreferenceResponse mpResponse = gatewayPaymentPort.createPaymentPreference(preferenceRequest)
+                .orElseThrow(() -> new ExternalPaymentGatewayException("Could not create payment preference with Mercado Pago."));
 
-            savedPayment.setExternalPaymentId(mpResponse.getId());
-            savedPayment.setPaymentLink(mpResponse.getInit_point());
+        savedPayment.setExternalPaymentId(mpResponse.getId());
+        savedPayment.setPaymentLink(mpResponse.getInit_point());
 
-            Payment finalPayment = paymentRepository.save(savedPayment);
+        Payment finalPayment = paymentRepository.save(savedPayment);
 
-            return paymentDtoMapper.toResponse(finalPayment);
-        } catch (Exception ex) {
-            savedPayment.setStatus(PaymentStatus.FAILED);
-            savedPayment.setUpdatedAt(LocalDateTime.now());
-            paymentRepository.save(savedPayment);
-            throw ex;
-        }
+        return paymentDtoMapper.toResponse(finalPayment);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -95,6 +93,15 @@ public class PaymentService implements IPaymentService {
                 .map(paymentDtoMapper::toResponse);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaymentResponse> findAllPayments(){
+        List<Payment> payments = paymentRepository.findAll();
+
+        return payments.stream()
+                .map(paymentDtoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional
@@ -112,5 +119,21 @@ public class PaymentService implements IPaymentService {
         payment.updateStatus(paymentStatus, updatedBy);
 
         return paymentRepository.save(payment);
+    }
+
+    @Override
+    public byte[] generatePaymentVoucher(Long paymentId) {
+        Optional<Payment> paymentOpt = paymentRepository.findById(paymentId);
+
+        if (paymentOpt.isEmpty()) {
+            throw new PaymentNotFoundException("Payment not found with ID: " + paymentId);
+        }
+
+        Payment payment = paymentOpt.get();
+
+        if (!payment.getStatus().equals(PaymentStatus.APPROVED)) {
+            throw new VoucherGenerationException("Cannot generate voucher for payment status: " + payment.getStatus());
+        }
+        return voucherPdfGeneratorService.generatePdf(payment);
     }
 }
