@@ -29,9 +29,9 @@ public class VoucherPdfGeneratorService {
     private static final DeviceRgb BRAND_COLOR = new DeviceRgb(0, 158, 227);
 
     public byte[] generatePdf(Payment payment) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
-            PdfWriter writer = new PdfWriter(baos);
+            PdfWriter writer = new PdfWriter(byteArrayOutputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
@@ -83,8 +83,8 @@ public class VoucherPdfGeneratorService {
             detailsTable.setWidth(UnitValue.createPercentValue(100));
 
             addDetailRow(detailsTable, "Estado de Pago:", payment.getStatus().name());
-            addDetailRow(detailsTable, "Referencia Externa:", payment.getExternalPaymentId());
-            addDetailRow(detailsTable, "ID de Operación:", payment.getId().toString());
+            addDetailRow(detailsTable, "Referencia Externa:", safeStringValue(payment.getExternalPaymentId()));
+            addDetailRow(detailsTable, "ID de Operación:", safeStringValue(payment.getId().toString()));
 
             document.add(detailsTable);
 
@@ -93,7 +93,7 @@ public class VoucherPdfGeneratorService {
             document.add(new Paragraph("Desde:")
                     .setFontSize(10)
                     .setBold());
-            document.add(new Paragraph("Reserva N° " + payment.getReservationId().toString())
+            document.add(new Paragraph("Reserva N° " + safeStringValue(payment.getReservationId().toString()))
                     .setFontSize(12)
                     .setMarginBottom(15));
 
@@ -104,7 +104,7 @@ public class VoucherPdfGeneratorService {
                     .setFontSize(12));
 
             document.close();
-            return baos.toByteArray();
+            return byteArrayOutputStream.toByteArray();
 
         } catch (IOException e) {
             throw new VoucherGenerationException("Error al generar el PDF del Voucher: " + e.getMessage());
@@ -121,5 +121,9 @@ public class VoucherPdfGeneratorService {
                 .add(new Paragraph(value).setFontSize(10))
                 .setBorder(null)
                 .setPaddingRight(0));
+    }
+
+    private String safeStringValue(Object value) {
+        return value != null ? String.valueOf(value) : "N/A";
     }
 }

@@ -1,19 +1,13 @@
 package com.servicio.reservas.pago.infraestructure.controller;
 
-import com.servicio.reservas.pago.application.dto.PaymentDtoMapper;
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.IPaymentService;
-import com.servicio.reservas.pago.domain.entities.Payment;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -54,7 +48,7 @@ public class PaymentController {
         headers.setContentType(MediaType.APPLICATION_PDF);
 
         String filename = "payment_voucher_" + paymentId + ".pdf";
-        headers.setContentDispositionFormData(filename, filename);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(filename).build());
         headers.setContentLength(pdfContents.length);
 
         return ResponseEntity.ok()

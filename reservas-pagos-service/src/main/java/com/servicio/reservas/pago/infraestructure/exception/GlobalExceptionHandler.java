@@ -54,6 +54,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VoucherGenerationException.class)
     public ResponseEntity<Map<String, String>> handleVoucherGenerationException(VoucherGenerationException ex) {
+
+        log.error("Voucher Generation Error (400): Failed to generate PDF.", ex);
+
         return new ResponseEntity<>(
                 Map.of("error", "Bad Request / Processing Error", "message", ex.getMessage()),
                 HttpStatus.BAD_REQUEST);
