@@ -5,7 +5,9 @@ import com.servicio.reservas.pago.domain.entities.Payment;
 import com.servicio.reservas.pago.domain.repository.IPaymentRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PaymentRepositoryPersistence implements IPaymentRepository {
@@ -29,12 +31,10 @@ public class PaymentRepositoryPersistence implements IPaymentRepository {
     }
 
     @Override
-    public Optional<Payment> findByReservationId(Long reservationId) {
-        return springRepository.findByReservationId(reservationId).map(PaymentMapper::toDomain);
-    }
-
-    @Override
-    public Optional<Payment> findByExternalPaymentId(String externalPaymentId) {
-        return springRepository.findByExternalPaymentId(externalPaymentId).map(PaymentMapper::toDomain);
+    public List<Payment> findAll() {
+        List<PaymentModel> paymentEntities = springRepository.findAll();
+        return paymentEntities.stream()
+                .map(PaymentMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

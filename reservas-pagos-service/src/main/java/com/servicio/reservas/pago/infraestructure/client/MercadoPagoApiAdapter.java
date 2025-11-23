@@ -23,7 +23,8 @@ public class MercadoPagoApiAdapter implements IGatewayPaymentPort {
                                  @Value("${app.notification_url}") String notificationUrl) {
 
         // Use instance-level configuration for PreferenceClient
-        this.preferenceClient = new PreferenceClient(accessToken);
+        MercadoPagoConfig.setAccessToken(accessToken);
+        this.preferenceClient = new PreferenceClient();
         this.notificationUrl = notificationUrl;
     }
 
