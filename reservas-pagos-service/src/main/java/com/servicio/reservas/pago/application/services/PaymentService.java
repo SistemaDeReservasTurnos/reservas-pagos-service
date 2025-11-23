@@ -93,6 +93,7 @@ public class PaymentService implements IPaymentService {
                 .map(paymentDtoMapper::toResponse);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<PaymentResponse> findAllPayments(){
         List<Payment> payments = paymentRepository.findAll();
@@ -120,6 +121,7 @@ public class PaymentService implements IPaymentService {
         return paymentRepository.save(payment);
     }
 
+    @Override
     public byte[] generatePaymentVoucher(Long paymentId) {
         Optional<Payment> paymentOpt = paymentRepository.findById(paymentId);
 

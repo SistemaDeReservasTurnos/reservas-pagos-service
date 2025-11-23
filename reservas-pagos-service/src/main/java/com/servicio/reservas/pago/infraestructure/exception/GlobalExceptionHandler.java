@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j; // Logger object import
 
@@ -58,7 +57,7 @@ public class GlobalExceptionHandler {
         log.error("Voucher Generation Error (400): Failed to generate PDF.", ex);
 
         return new ResponseEntity<>(
-                Map.of("error", "Bad Request / Processing Error", "message", ex.getMessage()),
-                HttpStatus.BAD_REQUEST);
+                Map.of("error", "Unprocessable Entity", "message", ex.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
