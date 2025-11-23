@@ -1,0 +1,23 @@
+# Directorios y archivos de compilación de Maven
+target/
+build/
+# Exclude pre-existing JAR files from the build context (host), but this does not affect JARs created during the Docker build process.
+*.jar
+*.war
+*.zip
+
+# Archivos de caché e IDE
+.idea/
+.vscode/
+.settings/
+*.log
+*.class
+temp
+tmp/
+
+# Control de Versiones
+.git
+.gitignore
+
+# Logs de la aplicación
+logs/
