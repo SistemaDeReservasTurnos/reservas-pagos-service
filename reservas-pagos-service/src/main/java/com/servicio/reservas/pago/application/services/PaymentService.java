@@ -120,6 +120,7 @@ public class PaymentService implements IPaymentService {
         return paymentRepository.save(payment);
     }
 
+    @Override
     public byte[] generatePaymentVoucher(Long paymentId) {
         Optional<Payment> paymentOpt = paymentRepository.findById(paymentId);
 
