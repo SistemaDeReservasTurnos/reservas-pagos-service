@@ -22,7 +22,7 @@ RUN mvn clean package -DskipTests
 # This creates a small and secure final image.
 # -----------------------------------------------------------------
 # Using a Slim/Alpine JRE for a smaller footprint
-FROM eclipse-temurin:23-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Define the application's exposed port
 EXPOSE 8084
