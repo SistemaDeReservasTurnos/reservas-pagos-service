@@ -2,7 +2,7 @@
 # STAGE 1: BUILD
 # Uses a robust image with all necessary tools for compilation (Maven + JDK).
 # -----------------------------------------------------------------
-FROM maven:3.9.5-eclipse-temurin-21 AS builder
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
 
 # Working directory inside the container
 WORKDIR /app
