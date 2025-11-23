@@ -27,6 +27,9 @@ RUN mvn clean package -DskipTests
 # Using a Slim/Alpine JRE for a smaller footprint
 FROM eclipse-temurin:17-jre-alpine
 
+# This is documentation only; variables are passed in ‘docker run’ or ‘docker compose’ (SRT-260)
+# --env-file .env
+
 # Define the application's exposed port
 EXPOSE 8084
 
