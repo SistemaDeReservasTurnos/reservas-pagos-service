@@ -4,7 +4,6 @@ build/
 *.jar
 *.war
 *.zip
-!pom.xml
 
 # Archivos de caché e IDE
 .idea/
