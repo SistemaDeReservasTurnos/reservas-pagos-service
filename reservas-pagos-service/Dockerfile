@@ -2,13 +2,16 @@
 # STAGE 1: BUILD
 # Uses a robust image with all necessary tools for compilation (Maven + JDK).
 # -----------------------------------------------------------------
-FROM maven:3.9.5-eclipse-temurin-21 AS builder
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
 
 # Working directory inside the container
 WORKDIR /app
 
 # Copy the Maven project file
 COPY pom.xml .
+
+# Download dependencies (cached unless pom.xml changes)
+RUN mvn dependency:go-offline -B
 
 # Copy the source code
 COPY src /app/src
@@ -22,7 +25,7 @@ RUN mvn clean package -DskipTests
 # This creates a small and secure final image.
 # -----------------------------------------------------------------
 # Using a Slim/Alpine JRE for a smaller footprint
-FROM eclipse-temurin:23-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Define the application's exposed port
 EXPOSE 8084
