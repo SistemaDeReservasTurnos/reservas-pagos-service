@@ -12,6 +12,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.servicio.reservas.pago.infraestructure.exception.VoucherGenerationException;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -106,7 +107,7 @@ public class VoucherPdfGeneratorService {
             return baos.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al generar el PDF del Voucher: " + e.getMessage(), e);
+            throw new VoucherGenerationException("Error al generar el PDF del Voucher: " + e.getMessage());
         }
     }
 

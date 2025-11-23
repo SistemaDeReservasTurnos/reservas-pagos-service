@@ -122,7 +122,7 @@ public class PaymentService implements IPaymentService {
         Payment payment = paymnetOpt.get();
 
         if (!payment.getStatus().equals(PaymentStatus.APPROVED)) {
-            throw new IllegalStateException("Cannot generate voucher for payment status: " + payment.getStatus());
+            throw new VoucherGenerationException("Cannot generate voucher for payment status: " + payment.getStatus());
         }
         return voucherPdfGeneratorService.generatePdf(payment);
     }
