@@ -106,7 +106,7 @@ public class VoucherPdfGeneratorService {
             return baos.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al generar el PDF del Voucher: " + e.getMessage(), e);
+            throw new RuntimeException("Error generating the Voucher PDF: " + e.getMessage(), e);
         }
     }
 
