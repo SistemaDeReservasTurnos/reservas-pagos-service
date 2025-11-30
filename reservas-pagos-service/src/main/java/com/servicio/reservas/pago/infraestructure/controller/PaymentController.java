@@ -1,7 +1,9 @@
 package com.servicio.reservas.pago.infraestructure.controller;
 
+import com.servicio.reservas.pago.application.dto.PaymentRequest;
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.IPaymentService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +27,10 @@ public class PaymentController {
 
     @PostMapping("/create")
     public ResponseEntity<PaymentResponse> createPayment(
-            @RequestParam @NotNull(message = "Reservation ID cannot be null")
-            @Positive(message = "Reservation ID must be a positive number")
-            Long reservationId) {
+            @RequestBody @Valid @NotNull(message = "Reservation ID cannot be null")
+            PaymentRequest request) {
 
-        PaymentResponse response = ipaymentservice.createPayment(reservationId);
+        PaymentResponse response = ipaymentservice.createPayment(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
