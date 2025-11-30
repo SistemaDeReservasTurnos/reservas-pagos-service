@@ -1,9 +1,6 @@
 package com.servicio.reservas.pago.application.services;
 
-import com.servicio.reservas.pago.application.dto.PaymentDtoMapper;
-import com.servicio.reservas.pago.application.dto.PaymentResponse;
-import com.servicio.reservas.pago.application.dto.PreferenceRequest;
-import com.servicio.reservas.pago.application.dto.PreferenceResponse;
+import com.servicio.reservas.pago.application.dto.*;
 import com.servicio.reservas.pago.domain.entities.Payment;
 import com.servicio.reservas.pago.domain.entities.PaymentStatus;
 import com.servicio.reservas.pago.domain.repository.IPaymentRepository;
@@ -44,12 +41,12 @@ public class PaymentService implements IPaymentService {
 
     @Override
     @Transactional
-    public PaymentResponse createPayment(Long reservationId) {
-        ReservationDTO reservation = reservationClient.findReservationById(reservationId)
-                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found with ID: " + reservationId));
+    public PaymentResponse createPayment(PaymentRequest request) {
+        ReservationDTO reservation = reservationClient.findReservationById(request.getReservationId())
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found with ID: " + request.getReservationId()));
 
         Payment initialPayment = Payment.builder()
-                .reservationId(reservationId)
+                .reservationId(request.getReservationId())
                 .amount(reservation.getAmount())
                 .status(PaymentStatus.PENDING)
                 .createdAt(LocalDateTime.now())
@@ -62,7 +59,7 @@ public class PaymentService implements IPaymentService {
         PreferenceRequest preferenceRequest = new PreferenceRequest(
                 Collections.singletonList(
                         new PreferenceRequest.Item(
-                                "Service Reservation No. " + reservationId,
+                                "Service Reservation No. " + request.getReservationId(),
                                 reservation.getAmount(),
                                 1
                         )
