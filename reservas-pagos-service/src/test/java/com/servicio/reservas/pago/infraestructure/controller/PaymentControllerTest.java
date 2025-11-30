@@ -5,8 +5,6 @@ import com.servicio.reservas.pago.application.dto.PaymentRequest;
 import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.IPaymentService;
 import com.servicio.reservas.pago.domain.entities.PaymentStatus;
-import com.servicio.reservas.pago.infraestructure.exception.InvalidPaymentStatusException;
-import com.servicio.reservas.pago.infraestructure.exception.PaymentNotFoundException;
 import com.servicio.reservas.pago.infraestructure.exception.VoucherGenerationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +13,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Pruebas de Integración para PaymentController.
- * Se enfoca en las interacciones HTTP, validación de DTOs y manejo de excepciones.
- */
 @WebMvcTest(PaymentController.class)
 public class PaymentControllerTest {
 
@@ -40,7 +31,7 @@ public class PaymentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // Simulación del servicio de la capa de aplicación
+    // Mock the Application Service layer dependency
     @MockBean
     private IPaymentService ipaymentservice;
 
@@ -104,10 +95,6 @@ public class PaymentControllerTest {
         verify(ipaymentservice, times(1)).createPayment(any(PaymentRequest.class));
     }
 
-    // NOTA: Para probar las anotaciones @NotNull y @Positive en el @RequestParam (que es ahora un @RequestBody PaymentRequest),
-    // se requeriría añadir @Valid al argumento del controller y el handler de MethodArgumentNotValidException,
-    // pero simularemos el flujo de error de negocio si la validación falla internamente o en la capa de servicio.
-
     // =========================================================================
     //                            3. GET /{id}
     // =========================================================================
@@ -158,11 +145,11 @@ public class PaymentControllerTest {
     void generateVoucher_whenGenerationFails_shouldReturn422UnprocessableEntity() throws Exception {
         Long paymentId = 1L;
 
-        // Simular que el servicio lanza la excepción controlada para la generación
-        doThrow(new VoucherGenerationException("Error al generar PDF")).when(ipaymentservice)
+        // Simulate service throwing the controlled exception
+        doThrow(new VoucherGenerationException("Error generating PDF")).when(ipaymentservice)
                 .generatePaymentVoucher(paymentId);
 
-        // El GlobalExceptionHandler debe capturar VoucherGenerationException y devolver 422
+        // Assumes a GlobalExceptionHandler maps VoucherGenerationException to 422
         mockMvc.perform(get(BASE_URL + "/{id}/voucher", paymentId))
                 .andExpect(status().isUnprocessableEntity()) // 422 UNPROCESSABLE ENTITY
                 .andExpect(jsonPath("$.error").value("Unprocessable Entity"));
