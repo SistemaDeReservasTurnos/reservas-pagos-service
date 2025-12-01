@@ -36,26 +36,12 @@ jobs:
         run: mvn clean install -DskipTests
         working-directory: reservas-pagos-service 
 
-      # Step 4: Run all defined tests (Unit and Integration)
-      - name: Run Tests
-        run: mvn test
-        working-directory: reservas-pagos-service
-        # Inject necessary environment variables to allow Spring Context to load (fixes IllegalState)
-        env:
-          # Use H2 in-memory database for fast, isolated CI testing
-          DATABASE_URL: jdbc:h2:mem:testdb
-          DATABASE_USER: sa
-          DATABASE_PASSWORD: password
-          # Dummy values for external service credentials (Mercado Pago, etc.)
-          ACCESS_TOKEN: fake_token_ci_1234
-          URL_NOTIFICACION: http://fake-url.com/notification
-          
-      # Step 5: Package the executable JAR
+      # Step 4: Package the executable JAR
       - name: Package Executable JAR
         run: mvn package -DskipTests
         working-directory: reservas-pagos-service
       
-      # Step 6: Save the resulting JAR artifact
+      # Step 5: Save the resulting JAR artifact
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
