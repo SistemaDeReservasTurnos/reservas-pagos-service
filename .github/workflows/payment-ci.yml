@@ -36,10 +36,6 @@ jobs:
         run: mvn clean install -DskipTests
         working-directory: reservas-pagos-service
 
-      # Step 4: Package the executable JAR
-      - name: Package Executable JAR
-        run: mvn package -DskipTests
-        working-directory: reservas-pagos-service
       
       # Step 5: Save the resulting JAR artifact
       - name: Upload JAR Artifact
