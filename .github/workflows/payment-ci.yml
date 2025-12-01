@@ -1,6 +1,6 @@
-name: CI for Payment Service (SRT-152)
+name: CI for Payment Service
 
-# Workflow triggers on push/pull request to the main branches
+# Triggers the workflow on push or pull request events to the main branches
 on:
   push:
     branches:
@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
+      # Step 1: Checkout code from the repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Configure Java version (Corretto 23)
+      # Step 2: Configure Java environment (Corretto 23)
       - name: Set up JDK 23 (Corretto)
         uses: actions/setup-java@v4
         with:
@@ -30,27 +30,37 @@ jobs:
           distribution: 'corretto'
           cache: 'maven' # Enable Maven dependency caching
 
-      # Clean install without running tests to prepare dependencies
+      # Step 3: Maven Clean Install (Skip Tests)
+      # Must include working-directory to find the pom.xml in the nested folder
       - name: Maven Clean Install (Skip Tests)
         run: mvn clean install -DskipTests
         working-directory: reservas-pagos-service 
 
-      # Run all defined tests
+      # Step 4: Run all defined tests (Unit and Integration)
       - name: Run Tests (SRT-151)
         run: mvn test
         working-directory: reservas-pagos-service
-
-      # Package the executable JAR after successful tests
+        # Inject necessary environment variables to allow Spring Context to load
+        # This prevents 'Failed to load ApplicationContext' errors from missing secrets/DB info
+        env:
+          # Use H2 in-memory database for fast, isolated CI testing
+          DATABASE_URL: jdbc:h2:mem:testdb
+          DATABASE_USER: sa
+          DATABASE_PASSWORD: password
+          # Dummy values for external service credentials (Mercado Pago)
+          ACCESS_TOKEN: fake_token_ci_1234
+          URL_NOTIFICACION: http://fake-url.com/notification
+          
+      # Step 5: Package the executable JAR
       - name: Package Executable JAR
-        # Skip tests again to avoid re-running them
         run: mvn package -DskipTests
         working-directory: reservas-pagos-service
       
-      # Save the resulting JAR artifact
+      # Step 6: Save the resulting JAR artifact
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: reservas-pagos-service-jar
-          # Path to the compiled JAR file
+          # Path to the compiled JAR file inside the subfolder
           path: reservas-pagos-service/target/*.jar
           retention-days: 5
