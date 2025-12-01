@@ -31,23 +31,22 @@ jobs:
           cache: 'maven' # Enable Maven dependency caching
 
       # Step 3: Maven Clean Install (Skip Tests)
-      # Must include working-directory to find the pom.xml in the nested folder
+      # Executes from the sub-directory to find the pom.xml
       - name: Maven Clean Install (Skip Tests)
         run: mvn clean install -DskipTests
         working-directory: reservas-pagos-service 
 
       # Step 4: Run all defined tests (Unit and Integration)
-      - name: Run Tests (SRT-151)
+      - name: Run Tests
         run: mvn test
         working-directory: reservas-pagos-service
-        # Inject necessary environment variables to allow Spring Context to load
-        # This prevents 'Failed to load ApplicationContext' errors from missing secrets/DB info
+        # Inject necessary environment variables to allow Spring Context to load (fixes IllegalState)
         env:
           # Use H2 in-memory database for fast, isolated CI testing
           DATABASE_URL: jdbc:h2:mem:testdb
           DATABASE_USER: sa
           DATABASE_PASSWORD: password
-          # Dummy values for external service credentials (Mercado Pago)
+          # Dummy values for external service credentials (Mercado Pago, etc.)
           ACCESS_TOKEN: fake_token_ci_1234
           URL_NOTIFICACION: http://fake-url.com/notification
           
