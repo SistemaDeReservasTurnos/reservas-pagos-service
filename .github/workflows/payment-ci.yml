@@ -37,7 +37,7 @@ jobs:
         working-directory: reservas-pagos-service
 
       
-      # Step 5: Save the resulting JAR artifact
+      # Step 4: Save the resulting JAR artifact
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
