@@ -33,8 +33,9 @@ jobs:
       # Clean install without running tests to prepare dependencies
       - name: Maven Clean Install (Skip Tests)
         run: mvn clean install -DskipTests
+        working-directory: reservas-pagos-service 
 
-      # Run all defined tests (HU SRT-151)
+      # Run all defined tests
       - name: Run Tests (SRT-151)
         run: mvn test
         working-directory: reservas-pagos-service
