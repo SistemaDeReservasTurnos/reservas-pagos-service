@@ -34,7 +34,7 @@ jobs:
       # Executes from the sub-directory to find the pom.xml
       - name: Maven Clean Install (Skip Tests)
         run: mvn clean install -DskipTests
-        working-directory: reservas-pagos-service 
+        working-directory: reservas-pagos-service
 
       # Step 4: Package the executable JAR
       - name: Package Executable JAR
