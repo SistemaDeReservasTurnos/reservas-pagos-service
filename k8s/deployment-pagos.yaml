@@ -36,6 +36,7 @@ spec:
           image: gcr.io/cloudsql-docker/gce-proxy:1.33.0 #-> image oficial del proxy
           securityContext:
             runAsNonRoot: true
+
           command:
 
             - "/cloud_sql_proxy"
