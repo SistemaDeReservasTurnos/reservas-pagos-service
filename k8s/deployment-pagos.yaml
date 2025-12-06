@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deploy-pagos
-  namespace: StudioBarber
+  namespace: studio-barber
   labels:
     app: reservas-pagos-service
 spec:
@@ -15,21 +15,28 @@ spec:
       labels:
         app: reservas-pagos-service
     spec:
+      serviceAccountName: pagos-all-permissions-ksa
       containers:
         - name: reservas-pagos-service
           # nombre local de la imagen -> pagos-service-local:latest (igual siempre )
           image: us-central1-docker.pkg.dev/studiobarber-480215/repo-pagos/pagos-service:v1.0.0
           imagePullPolicy: Always  # nos aseguramos que siempre use la ultima version de la imagen
           ports:
-            - containerPort: 8084
+            - containerPort: 8089
               protocol: TCP
           env:
+            - name: SPRING_PROFILES_ACTIVE # -> para activar el perfil de cloud (configuraciones especificas para la nube)
+              value: "cloud"
+
             - name: DB_HOST
               value: "127.0.0.1" # La aplicación se conecta al sidecar
             - name: DB_PORT
               value: "5432"     # Puerto que usa el sidecar
             - name: DB_USER   # El user es el email del GSA
               value: "pagos-all-permissions@studiobarber-480215.iam.gserviceaccount.com"
+
+            - name: PUBLIC_API_URL
+              value: "xx"
 
         ## sidecar del proxy cloud sql auth
         - name: cloudsql-proxy
