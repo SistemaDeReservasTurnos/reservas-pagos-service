@@ -5,9 +5,9 @@ import com.servicio.reservas.pago.application.dto.PaymentResponse;
 import com.servicio.reservas.pago.application.services.IPaymentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -19,6 +19,7 @@ public class PaymentController {
     private final IPaymentService ipaymentservice;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
     public ResponseEntity<List<PaymentResponse>> listAllPayments() {
         List<PaymentResponse> payments = ipaymentservice.findAllPayments();
 
@@ -26,6 +27,7 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR') or hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<PaymentResponse> createPayment(
             @RequestBody @Valid @NotNull(message = "Reservation ID cannot be null")
             PaymentRequest request) {
@@ -35,6 +37,7 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PaymentResponse> getPaymentStatus(@PathVariable Long id) {
         return ipaymentservice.getPaymentById(id)
                 .map(ResponseEntity::ok)
@@ -42,6 +45,7 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}/voucher")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR') or hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<byte[]> generateVoucher(@PathVariable("id") Long paymentId) {
 
         byte[] pdfContents = ipaymentservice.generatePaymentVoucher(paymentId);

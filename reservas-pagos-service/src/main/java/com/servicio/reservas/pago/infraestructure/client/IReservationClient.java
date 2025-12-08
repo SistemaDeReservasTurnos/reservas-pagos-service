@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
 
-@FeignClient(name = "reservas-agenda-service")
+@FeignClient(name = "reservas-agenda-service", configuration = ReservationClientConfig.class)
 public interface IReservationClient {
 
     @GetMapping("/api/reservations/{id}")
