@@ -32,13 +32,13 @@ public class ReservationClientConfig {
     public RequestInterceptor oauth2FeignRequestInterceptor(OAuth2AuthorizedClientManager authorizedClientManager) {
         return requestTemplate -> {
             OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                    .withClientRegistrationId("reservation-service-client")
+                    .withClientRegistrationId("pagos-service-client")
                     .principal("reservas-pagos-service")
                     .build();
 
             String accessToken = Objects.requireNonNull(
                             authorizedClientManager.authorize(authorizeRequest),
-                            "Failed to obtain OAuth2 access token for payment-service-client")
+                            "Failed to obtain OAuth2 access token for pagos-service-client")
                     .getAccessToken()
                     .getTokenValue();
 
